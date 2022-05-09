@@ -43,6 +43,7 @@ class _CreatePage extends State<CreatePage> {
     }
   }
 
+  // Own widget
   List<Widget> createForm() {
     var children = List<Widget>.empty(growable: true);
 
@@ -70,7 +71,7 @@ class _CreatePage extends State<CreatePage> {
               snapshot.data?.insert(0, "Select a project");
               return DropdownButton<String>(
                   value: _dropDownValue,
-                  icon: const Icon(Icons.arrow_downward),
+                  // icon: const Icon(Icons.arrow_downward),
                   items: snapshot.data
                       ?.map<DropdownMenuItem<String>>((String str) {
                     return DropdownMenuItem<String>(
@@ -103,7 +104,24 @@ class _CreatePage extends State<CreatePage> {
             child: const Text("Save",
                 style: TextStyle(fontSize: 18, color: Colors.white)),
             onPressed: () {
-              print(_template.toJson());
+              api.saveProject(_template.toJson());
+
+              ScaffoldMessenger.of(context).showMaterialBanner(MaterialBanner(
+                  content: Text("${_controllers[0].text} has been saved!",
+                      style:
+                          const TextStyle(fontSize: 18, color: Colors.white)),
+                  padding: const EdgeInsets.all(20),
+                  backgroundColor: Colors.green,
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).clearMaterialBanners();
+                      },
+                      child: const Text("DISMISS"),
+                    )
+                  ]));
+
+              clearInput();
             },
             style: ButtonStyle(
               backgroundColor:
@@ -113,6 +131,12 @@ class _CreatePage extends State<CreatePage> {
         )));
 
     return children;
+  }
+
+  void clearInput() {
+    for (var controller in _controllers) {
+      controller.text = '';
+    }
   }
 
   @override
