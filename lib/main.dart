@@ -51,12 +51,9 @@ class App extends StatefulWidget {
 }
 
 class _AppPageState extends State<App> {
-  late List<TextEditingController> _controllers;
-
   @override
   void initState() {
     super.initState();
-    _controllers = [TextEditingController(), TextEditingController()];
   }
 
   @override
@@ -67,13 +64,5 @@ class _AppPageState extends State<App> {
         ),
         backgroundColor: Theme.of(context).backgroundColor,
         body: const LoginPage());
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    for (var controller in _controllers) {
-      controller.dispose();
-    }
   }
 }
