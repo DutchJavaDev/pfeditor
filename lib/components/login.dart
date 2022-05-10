@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../api/backend.dart' as api;
 
-import '../home.dart';
-
 // use stateless instead since ui wont be updating?
 //  nvm it will when waiting for network
 class LoginPage extends StatefulWidget {
