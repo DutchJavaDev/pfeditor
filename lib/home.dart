@@ -46,48 +46,6 @@ class _HomePage extends State<HomePage> with RouteAware {
     setState(() {});
   }
 
-  List<Widget> createChildren(double containerWidth) {
-    var children = List<Widget>.empty(growable: true);
-    double padding = 1;
-    for (var i = 0; i < 50; i++) {
-      children.add(Row(
-        children: [
-          SizedBox(
-            width: containerWidth / 2,
-            height: containerWidth / 4,
-            child: Padding(
-              padding: EdgeInsets.all(padding),
-              child: Container(
-                width: containerWidth / 2 - padding,
-                height: containerWidth / 4 - padding,
-                decoration: BoxDecoration(
-                    color: Colors.green,
-                    borderRadius: BorderRadius.circular(5)),
-                child: Center(child: Text("$i")),
-              ),
-            ),
-          ),
-          SizedBox(
-            width: containerWidth / 2,
-            height: containerWidth / 4,
-            child: Padding(
-                padding: EdgeInsets.all(padding),
-                child: Container(
-                  width: containerWidth / 2 - padding,
-                  height: containerWidth / 4 - padding,
-                  decoration: BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.circular(5)),
-                  child: Text("${i * 2}"),
-                )),
-          )
-        ],
-      ));
-    }
-
-    return children;
-  }
-
   @override
   Widget build(BuildContext context) {
     var appWidth = MediaQuery.of(context).size.width;
@@ -111,11 +69,25 @@ class _HomePage extends State<HomePage> with RouteAware {
                       var projects = jsonDecode(snapshot.data!);
 
                       return ListView.builder(
-                        itemCount: projects.length,
+                        // use grid view
+                        itemCount: api.projectsCount,
                         itemBuilder: (context, index) {
                           var project =
                               ProjectBlueprint.fromJson(projects[index]);
-                          return Center(child: Text(project.title));
+                          return Column(
+                            children: [
+                              Text(project.title),
+                              Text(project.description),
+                              Text(project.url),
+                              TextButton(
+                                  onPressed: () {
+                                    activeProjectId = index;
+
+                                    Navigator.pushNamed(context, '/create');
+                                  },
+                                  child: const Text("Edit"))
+                            ],
+                          );
                         },
                       );
                     } else if (snapshot.hasError) {
@@ -128,9 +100,7 @@ class _HomePage extends State<HomePage> with RouteAware {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return const CreatePage();
-          }));
+          Navigator.pushNamed(context, '/create');
         },
         child: const Icon(Icons.add),
       ),
