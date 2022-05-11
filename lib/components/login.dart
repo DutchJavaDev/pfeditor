@@ -17,7 +17,10 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    _controllers = [TextEditingController(), TextEditingController()];
+    _controllers = [
+      TextEditingController(text: "b@lo.com"),
+      TextEditingController(text: "xgkjjgnkddgn,dm")
+    ];
   }
 
   @override
@@ -100,6 +103,7 @@ class _LoginPageState extends State<LoginPage> {
                                             _controllers[0].text,
                                             _controllers[1].text)) {
                                           Navigator.pushNamed(context, '/home');
+                                          return;
                                         }
                                         // Error mate
                                         setState(() {
