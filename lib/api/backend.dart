@@ -7,12 +7,11 @@ import '../data/blueprint.dart';
 
 var _pathPrefix = "pfeditorData";
 var _fileName = "pfeditor_json_data.json";
-var _projectsCache = [];
-var _projectsCount = 0;
-int get projectsCount => _projectsCount;
+var _projectsCache = List.empty(growable: true);
+int get projectsCount => _projectsCache.length;
 
 ProjectBlueprint? getByID(int projectId) {
-  if (projectId > _projectsCount) return null;
+  if (projectId > projectsCount) return null;
   return ProjectBlueprint.fromJson(_projectsCache[projectId]);
 }
 
@@ -41,6 +40,16 @@ Future<Directory> getTemporaryDirectory() async {
   }
 }
 
+void deleteById(int index) async {
+  _projectsCache.removeAt(index);
+
+  var tempDir = await getTemporaryDirectory();
+
+  var file = File("${tempDir.path}${Platform.pathSeparator}$_fileName");
+
+  file.writeAsStringSync(jsonEncode(_projectsCache));
+}
+
 void saveProject(Map<String, dynamic> projectblueprint,
     [int updateId = -1]) async {
   var tempDir = await getTemporaryDirectory();
@@ -59,7 +68,6 @@ void saveProject(Map<String, dynamic> projectblueprint,
     }
 
     file.writeAsStringSync(jsonEncode(list));
-    _projectsCount = list.length;
   } else {
     var newEntry = [projectblueprint];
     file = await file.create();
@@ -68,8 +76,8 @@ void saveProject(Map<String, dynamic> projectblueprint,
   _projectsCache = jsonDecode(file.readAsStringSync());
 }
 
-Future<String> loadProject() async {
-  if (_projectsCache.length > 0) return jsonEncode(_projectsCache);
+Future<String> loadProjects() async {
+  if (_projectsCache.isNotEmpty) return jsonEncode(_projectsCache);
 
   var tempDir = await getTemporaryDirectory();
   var file = File("${tempDir.path}/$_fileName");
@@ -83,9 +91,6 @@ Future<String> loadProject() async {
       ProjectBlueprint("King", "Kong", "").toJson(),
       ProjectBlueprint("AG", "S", "").toJson(),
     ];
-
-    _projectsCount = list.length;
-
     file.writeAsStringSync(jsonEncode(list));
   }
 
@@ -95,6 +100,6 @@ Future<String> loadProject() async {
 }
 
 Future<bool> simulateLogin(String email, String password) async {
-  await Future.delayed(const Duration(seconds: 1));
+  await Future.delayed(const Duration(milliseconds: 500));
   return true;
 }
