@@ -20,7 +20,9 @@ class _HomePage extends State<HomePage> with RouteAware {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    observer.subscribe(this, ModalRoute.of(context)!);
+    var modalRoute = ModalRoute.of(context);
+    if (modalRoute == null) return;
+    observer.subscribe(this, modalRoute);
   }
 
   @override
@@ -42,7 +44,7 @@ class _HomePage extends State<HomePage> with RouteAware {
   }
 
   void _updateListView() async {
-    if (!hasBeenBuild) return;
+    //if (!hasBeenBuild) return;
     setState(() {});
   }
 
@@ -61,31 +63,37 @@ class _HomePage extends State<HomePage> with RouteAware {
             child: SizedBox(
               width: containerWidth,
               child: FutureBuilder(
-                  future: api.loadProject(),
+                  future: api.loadProjects(),
                   builder:
                       (BuildContext context, AsyncSnapshot<String> snapshot) {
                     if (snapshot.hasData) {
                       // Own widget
                       var projects = jsonDecode(snapshot.data!);
-
-                      return ListView.builder(
-                        // use grid view
+                      return GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4,
+                        ),
                         itemCount: api.projectsCount,
                         itemBuilder: (context, index) {
                           var project =
                               ProjectBlueprint.fromJson(projects[index]);
                           return Column(
                             children: [
-                              Text(project.title),
-                              Text(project.description),
-                              Text(project.url),
-                              TextButton(
-                                  onPressed: () {
-                                    activeProjectId = index;
+                              Flexible(child: Text(project.title), flex: 1),
+                              Flexible(
+                                  child: Text(project.description), flex: 5),
+                              Flexible(child: Text(project.url), flex: 3),
+                              Flexible(
+                                child: TextButton(
+                                    onPressed: () {
+                                      activeProjectId = index;
 
-                                    Navigator.pushNamed(context, '/create');
-                                  },
-                                  child: const Text("Edit"))
+                                      Navigator.pushNamed(context, '/create');
+                                    },
+                                    child: const Text("Edit")),
+                                flex: 4,
+                              )
                             ],
                           );
                         },
