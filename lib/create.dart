@@ -50,7 +50,9 @@ class _CreatePage extends State<CreatePage> with RouteAware {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    observer.subscribe(this, ModalRoute.of(context)!);
+    var modalRoute = ModalRoute.of(context);
+    if (modalRoute == null) return;
+    observer.subscribe(this, modalRoute);
   }
 
   @override
@@ -75,7 +77,7 @@ class _CreatePage extends State<CreatePage> with RouteAware {
   void _updateProject() {
     if (activeProjectId == -1) return;
 
-    _template = api.getByID(activeProjectId)!;
+    _template = api.getByID(activeProjectId) ?? ProjectBlueprint("", "", "");
 
     _controllers[0].text = _template.title;
     _controllers[1].text = _template.description;
@@ -138,8 +140,9 @@ class _CreatePage extends State<CreatePage> with RouteAware {
                               );
                             }).toList(),
                             onChanged: (String? s) {
+                              if (s == null) return;
                               setState(() {
-                                _dropDownValue = s!;
+                                _dropDownValue = s;
                                 _template.url = _dropDownValue.split(" ")[1];
                               });
                             });
@@ -184,6 +187,44 @@ class _CreatePage extends State<CreatePage> with RouteAware {
                       style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.all<Color>(Colors.blueGrey),
+                      ),
+                    ),
+                  )),
+              Padding(
+                  padding: const EdgeInsets.only(top: 15, bottom: 5),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 55,
+                    child: TextButton(
+                      child: const Text("Delete",
+                          style: TextStyle(fontSize: 18, color: Colors.red)),
+                      onPressed: activeProjectId <= -1
+                          ? null
+                          : () {
+                              api.deleteById(activeProjectId);
+                              clearInput();
+                              ScaffoldMessenger.of(context).showMaterialBanner(
+                                  MaterialBanner(
+                                      content: const Text(
+                                          "Project has been deleted",
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              color: Colors.white)),
+                                      padding: const EdgeInsets.all(20),
+                                      backgroundColor: Colors.green,
+                                      actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        ScaffoldMessenger.of(context)
+                                            .clearMaterialBanners();
+                                      },
+                                      child: const Text("DISMISS"),
+                                    )
+                                  ]));
+                            },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Colors.grey),
                       ),
                     ),
                   ))
