@@ -8,6 +8,9 @@ import '../data/blueprint.dart';
 var _pathPrefix = "pfeditorData";
 var _fileName = "pfeditor_json_data.json";
 var _projectsCache = List.empty(growable: true);
+var _githubProjectsCache = List<String>.empty(growable: true);
+var _githubProjectSeparator = '[@25fsr832]';
+String get GithubSeparator => _githubProjectSeparator;
 int get projectsCount => _projectsCache.length;
 
 ProjectBlueprint? getByID(int projectId) {
@@ -16,17 +19,24 @@ ProjectBlueprint? getByID(int projectId) {
 }
 
 Future<List<String>> fecthProjects() async {
+  if (_githubProjectsCache.isNotEmpty) return _githubProjectsCache;
+
   var projects = List<String>.empty(growable: true);
   var result = await http
       .get(Uri.parse("https://api.github.com/users/dutchjavadev/repos"));
 
   var data = jsonDecode(result.body);
 
+  //projects.add("Select a project$GithubSeparator${Platform.numberOfProcessors}");
+
   for (var d in data) {
-    projects.add("${d["full_name"].toString()} ${d["html_url"].toString()}");
+    projects.add(
+        "${d["full_name"].toString()}$GithubSeparator${d["html_url"].toString()}");
   }
 
-  return projects;
+  _githubProjectsCache = projects;
+
+  return _githubProjectsCache;
 }
 
 Future<Directory> getTemporaryDirectory() async {
