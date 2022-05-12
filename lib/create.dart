@@ -17,7 +17,7 @@ class _CreatePage extends State<CreatePage> with RouteAware {
   var _template = ProjectBlueprint("Title", "Des", "Url");
   final _inputFields = ["Title", "Description"];
   late List<TextEditingController> _controllers;
-  String _dropDownValue = 'Select a project';
+  String _dropDownValue = '';
 
   @override
   void initState() {
@@ -125,25 +125,34 @@ class _CreatePage extends State<CreatePage> with RouteAware {
                     builder: (BuildContext context,
                         AsyncSnapshot<List<String>> snapshot) {
                       if (snapshot.hasData) {
-                        snapshot.data?.insert(0, "Select a project");
+                        _dropDownValue =
+                            snapshot.data![0].split(api.GithubSeparator)[0];
+
                         return DropdownButton<String>(
-                            value: _dropDownValue,
-                            // icon: const Icon(Icons.arrow_downward),
+                            icon: const Padding(
+                                padding: EdgeInsets.only(right: 15),
+                                child: Icon(Icons.arrow_downward)),
+                            hint: const Padding(
+                                padding: EdgeInsets.only(left: 10),
+                                child: Text("Project",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18))),
                             items: snapshot.data
-                                ?.map<DropdownMenuItem<String>>((String str) {
+                                ?.map<DropdownMenuItem<String>>((String data) {
+                              var arr = data.split(api.GithubSeparator);
+                              var cv = arr[1];
+                              var v = arr[0];
                               return DropdownMenuItem<String>(
-                                value: str,
-                                child: Text(str),
-                                enabled: str.startsWith("Select a project")
-                                    ? false
-                                    : true,
+                                value: cv,
+                                child: Text(v),
                               );
                             }).toList(),
                             onChanged: (String? s) {
                               if (s == null) return;
                               setState(() {
                                 _dropDownValue = s;
-                                _template.url = _dropDownValue.split(" ")[1];
+                                _template.url = s;
                               });
                             });
                       } else if (snapshot.hasError) {
