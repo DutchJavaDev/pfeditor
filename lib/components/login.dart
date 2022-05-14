@@ -28,9 +28,12 @@ class _LoginPageState extends State<LoginPage> {
     var appWidth = MediaQuery.of(context).size.width;
     var containerWidth = appWidth * 0.5;
     var formPadding = containerWidth * 0.185;
-    return Hero(
-        tag: "landing",
-        child: Center(
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text("Bonjour"),
+        ),
+        backgroundColor: Theme.of(context).backgroundColor,
+        body: Center(
           child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -102,6 +105,9 @@ class _LoginPageState extends State<LoginPage> {
                                         if (await api.simulateLogin(
                                             _controllers[0].text,
                                             _controllers[1].text)) {
+                                          setState(() {
+                                            _showLoading = false;
+                                          });
                                           Navigator.pushNamed(context, '/home');
                                           return;
                                         }
