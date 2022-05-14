@@ -58,11 +58,6 @@ class _AppPageState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
-        backgroundColor: Theme.of(context).backgroundColor,
-        body: const LoginPage());
+    return const LoginPage();
   }
 }
