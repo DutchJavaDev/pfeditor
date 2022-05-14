@@ -59,94 +59,89 @@ class _HomePage extends State<HomePage> with RouteAware {
         title: const Text("Bonjour"),
       ),
       body: Center(
-        child: Hero(
-            tag: "landing",
-            child: SizedBox(
-              width: containerWidth,
-              child: FutureBuilder(
-                  future: api.loadProjects(),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<String> snapshot) {
-                    if (snapshot.hasData) {
-                      // Own widget
-                      var projects = jsonDecode(snapshot.data!);
-                      return GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 4,
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 20),
-                        itemCount: api.projectsCount,
-                        itemBuilder: (context, index) {
-                          var project =
-                              ProjectBlueprint.fromJson(projects[index]);
-                          return Card(
-                            color: Colors.grey,
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 5.0, right: 5.0, top: 5.0),
-                              child: Column(
-                                children: [
-                                  Flexible(
-                                    child: Container(
-                                      child: Center(child: Text(project.title)),
-                                      color: Color((math.Random().nextDouble() *
-                                                  0xFFFFFF)
-                                              .toInt())
-                                          .withOpacity(1.0),
-                                    ),
-                                    flex: 1,
-                                  ),
-                                  Flexible(
-                                    child: Container(
-                                      width: double.infinity,
-                                      height: double.infinity,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(5.0),
-                                        child: Text(project.description),
-                                      ),
-                                      color: Color((math.Random().nextDouble() *
-                                                  0xFFFFFF)
-                                              .toInt())
-                                          .withOpacity(1.0),
-                                    ),
-                                    flex: 3,
-                                  ),
-                                  Flexible(
-                                    child: Container(
-                                      child: Center(child: Text(project.url)),
-                                      color: Color((math.Random().nextDouble() *
-                                                  0xFFFFFF)
-                                              .toInt())
-                                          .withOpacity(1.0),
-                                    ),
-                                    flex: 1,
-                                  ),
-                                  Flexible(
-                                    child: TextButton(
-                                        onPressed: () {
-                                          activeProjectId = index;
-
-                                          Navigator.pushNamed(
-                                              context, '/create');
-                                        },
-                                        child: const Text("Edit")),
-                                    flex: 1,
-                                  )
-                                ],
+        child: SizedBox(
+          width: containerWidth,
+          child: FutureBuilder(
+              future: api.loadProjects(),
+              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                if (snapshot.hasData) {
+                  // Own widget
+                  var projects = jsonDecode(snapshot.data!);
+                  return GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 20),
+                    itemCount: api.projectsCount,
+                    itemBuilder: (context, index) {
+                      var project = ProjectBlueprint.fromJson(projects[index]);
+                      return Card(
+                        color: Colors.grey,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 5.0, right: 5.0, top: 5.0),
+                          child: Column(
+                            children: [
+                              Flexible(
+                                child: Container(
+                                  child: Center(child: Text(project.title)),
+                                  color: Color((math.Random().nextDouble() *
+                                              0xFFFFFF)
+                                          .toInt())
+                                      .withOpacity(1.0),
+                                ),
+                                flex: 1,
                               ),
-                            ),
-                          );
-                        },
+                              Flexible(
+                                child: Container(
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Text(project.description),
+                                  ),
+                                  color: Color((math.Random().nextDouble() *
+                                              0xFFFFFF)
+                                          .toInt())
+                                      .withOpacity(1.0),
+                                ),
+                                flex: 3,
+                              ),
+                              Flexible(
+                                child: Container(
+                                  child: Center(child: Text(project.url)),
+                                  color: Color((math.Random().nextDouble() *
+                                              0xFFFFFF)
+                                          .toInt())
+                                      .withOpacity(1.0),
+                                ),
+                                flex: 1,
+                              ),
+                              Flexible(
+                                child: TextButton(
+                                    onPressed: () {
+                                      activeProjectId = index;
+
+                                      Navigator.pushNamed(context, '/create');
+                                    },
+                                    child: const Text("Edit")),
+                                flex: 1,
+                              )
+                            ],
+                          ),
+                        ),
                       );
-                    } else if (snapshot.hasError) {
-                      return Text("Error: ${snapshot.error}");
-                    } else {
-                      return const Center(child: Text("Loading beep boop"));
-                    }
-                  }),
-            )),
+                    },
+                  );
+                } else if (snapshot.hasError) {
+                  return Text("Error: ${snapshot.error}");
+                } else {
+                  return const Center(child: Text("Loading beep boop"));
+                }
+              }),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
