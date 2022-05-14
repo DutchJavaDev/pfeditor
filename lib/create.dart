@@ -175,6 +175,7 @@ class _CreatePage extends State<CreatePage> with RouteAware {
 
                         ScaffoldMessenger.of(context).showMaterialBanner(
                             MaterialBanner(
+                                elevation: 1.0,
                                 content: Text(
                                     "${_controllers[0].text} has been saved!",
                                     style: const TextStyle(
